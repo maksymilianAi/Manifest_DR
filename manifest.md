@@ -1,4 +1,4 @@
-# Design Review Manifest V3.3
+# Design Review Manifest V3.4
 
 ## Viewport
 1440px width, set manually before the session. Do not attempt to resize it.
@@ -22,7 +22,7 @@ Take one screenshot of the current browser page and begin analysis immediately �
 - Do NOT show a plan, outline, or list of steps — begin immediately
 - Do NOT ask for approval before proceeding
 - Take MAXIMUM 1 screenshot of the browser for comparison
-- Only check what looks visually different in the screenshots
+- Check every item listed in "What to check" against the design — do not skip elements because they look approximately correct
 - Use DevTools only to confirm values where a visual difference is already confirmed — never proactively on elements that look correct
 - When DevTools is needed, batch ALL queries into a single JS call — never separate calls per element
 
@@ -103,7 +103,7 @@ Exactly 5 columns. Every row fully filled. No Priority column.
 ---
 
 ## After showing all bugs
-After presenting the bug table, ask exactly this — nothing else:
+After presenting the bug table, add a blank line, then ask exactly this as a standalone paragraph outside the table — nothing else:
 
 > Proceed with these bugs? Type Y to generate the report · N to make changes
 
@@ -111,7 +111,7 @@ After presenting the bug table, ask exactly this — nothing else:
    - One JS call: collect date + all bounding rects for all bugs together
    - Crop all screenshots in sequence using the pre-collected coordinates — no JS calls during cropping
    - Generate and write the complete HTML report in one single file operation
-   - Respond with exactly one line: "Report generated: [filename] · [date]" — nothing else
+   - Respond with exactly one line: "Report generated: [filename]" — nothing else
 - N → wait for instructions, update the table, then ask Y/N again
 
 ---
@@ -123,18 +123,30 @@ Ask once about Figma link, then generate the HTML report with an empty bug list.
 ---
 
 ## Screenshot cropping rules
-For each bug, crop both screenshots to highlight the problem area.
 
-- Focus on the exact element — not the whole page or component
-- Same height for both crops — never let one side be taller
-- Minimum height: 100px — scale up thin elements (breadcrumbs, labels) to meet this
-- Exclude sidebar from all crops
-- Zoom: 2× for normal elements, 3× for thin/small elements
-- Center the problem element precisely in both crops — calculate the element's center point from the bounding rect and ensure equal padding on all sides around it; never offset or clip the element
+For each bug, crop both screenshots to visually highlight the problem area.
 
-Before taking any screenshot: close DevTools completely — never take a screenshot while DevTools is open or while any element is highlighted by the inspector. The DevTools overlay causes yellow/orange tinting on screenshots.
+**Focus on the problem place.**
+Each crop must be centered on the specific element that differs — not the whole page, not the whole component. The viewer should immediately see what is wrong without scanning.
 
-Collect date + ALL bounding boxes for ALL bugs in one single JS call — this counts as the final allowed JS call:
+**Same height for both sides.**
+The frontend crop and design crop in each bug card must be scaled to the same pixel height. Never let one side be taller or shorter than the other.
+
+**Minimum height: 100px.**
+No screenshot may render shorter than 100px. Thin strips (e.g. breadcrumb bars) must be scaled up to meet this minimum.
+
+**Exclude the sidebar.**
+Never include the sidebar navigation in any crop. Use DevTools `getBoundingClientRect()` or pixel scanning to find where the sidebar ends before cropping.
+
+**Zoom level: 2× default, 3× for small/thin elements.**
+Scale crops up by 2× for normal elements. Use 3× for thin rows (table headers, breadcrumbs, single-line labels).
+
+**Before taking any screenshot: close DevTools completely.**
+Never take a screenshot while DevTools is open or while any element is highlighted by the inspector. The DevTools overlay causes yellow/orange tinting.
+
+### How to crop
+
+Collect date + ALL bounding boxes for ALL bugs in one single JS call before cropping anything:
 ```js
 ({
   date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' }),
@@ -143,9 +155,20 @@ Collect date + ALL bounding boxes for ALL bugs in one single JS call — this co
   // ...all bugs
 })
 ```
-Add 16px horizontal + 10px vertical padding around each element.
-Never make another JS call after this — use only the pre-collected values.
+Then for each bug:
+1. Add padding: 16px horizontal, 10px vertical around the element
+2. Find the matching area in the Figma screenshot
+3. Scale both crops to the same height (use the taller of the two, then apply zoom multiplier)
+4. Ensure height ≥ 100px after scaling
 
+Never make another JS call after the batch — use only the pre-collected values.
+
+### Centering rule
+The element being compared must appear centered in both the frontend and design crop. Calculate the element's center point from the bounding rect and ensure equal padding on all sides. Never let the subject sit at the far left or right edge of the frame.
+
+Example: if the bug is about a label in a breadcrumb, crop so that label sits in the middle of the screenshot — not at the edge.
+
+### Sidebar edge case
 If the problem element starts right after the sidebar:
 - Find the exact pixel where the sidebar ends (scan for dark navy pixels)
 - Start the crop from that x position + a small gap
