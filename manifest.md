@@ -64,9 +64,17 @@ If unsure: ask me "Is '[value]' in [component] static or dynamic?"
 
 ---
 
+## Pagination rules
+- Pagination component itself (arrows, page buttons, styling) must match the design exactly
+- Number of pages shown is dynamic — do NOT flag as a bug
+- Everything else in pagination (button size, color, font, spacing) must match
+
+---
+
 ## Color rule
 Always evaluate the visual result, not the raw CSS value.
 Always report colors in hex — convert rgb(23, 106, 246) → #176AF6 before reporting.
+If the design shows a color name or variable — resolve it to its hex value.
 
 ---
 
@@ -87,18 +95,21 @@ Always report colors in hex — convert rgb(23, 106, 246) → #176AF6 before rep
 |---|-----------|----------|------------------|-------------------|
 
 Exactly 5 columns. Every row fully filled. No Priority column.
+- NO empty columns anywhere
+- NO extra column between # and Component
 
 ---
 
 ## After showing all bugs
-Wait for my review. I will say e.g. "dismiss 3, 5 — bug 2 is critical"
-- Dismiss silently — no follow-up questions per bug
-- If I volunteer a reason for dismissal — say "Got it, I'll note that for the manifest"
-
-Then:
-1. Auto-detect feature name from page title — do not ask me
-2. Ask once: "Would you like to add a Figma link to the report? (optional)"
-3. Generate HTML report immediately
+After presenting the bug table:
+1. Ask once: "Would you like to add a Figma link to the report? (optional)"
+2. Present a plan with these exact steps before executing — do not skip the plan:
+   - Get today's real date from browser console
+   - Collect ALL bounding rects for ALL bugs in one single JS call
+   - Crop all screenshots in sequence using the pre-collected coordinates — no additional JS calls
+   - Generate and write the complete HTML report in one single file operation
+3. Wait for plan approval before proceeding
+4. After the report is saved, respond with exactly one line: "Report generated: [filename] · [date]" — nothing else
 
 ---
 
@@ -116,10 +127,25 @@ For each bug, crop both screenshots to highlight the problem area.
 - Minimum height: 100px — scale up thin elements (breadcrumbs, labels) to meet this
 - Exclude sidebar from all crops
 - Zoom: 2× for normal elements, 3× for thin/small elements
-- Center the problem element in both crops
+- Center the problem element precisely in both crops — calculate the element's center point from the bounding rect and ensure equal padding on all sides around it; never offset or clip the element
 
-Bounding box: `const r = document.querySelector('SELECTOR').getBoundingClientRect()`
-Add 16px horizontal + 10px vertical padding around the element.
+Before taking any screenshot: close DevTools completely — never take a screenshot while DevTools is open or while any element is highlighted by the inspector. The DevTools overlay causes yellow/orange tinting on screenshots.
+
+Collect ALL bounding boxes for ALL bugs in one JS call before cropping anything:
+```js
+const rects = {
+  bug1: document.querySelector('SELECTOR_1').getBoundingClientRect(),
+  bug2: document.querySelector('SELECTOR_2').getBoundingClientRect(),
+  // ...all bugs
+};
+```
+Add 16px horizontal + 10px vertical padding around each element.
+Never query the DOM again after this — use only the pre-collected rects.
+
+If the problem element starts right after the sidebar:
+- Find the exact pixel where the sidebar ends (scan for dark navy pixels)
+- Start the crop from that x position + a small gap
+- The content must be centered in the remaining crop window
 
 ---
 
@@ -131,7 +157,9 @@ Get real date before generating: `new Date().toLocaleDateString('en-US', { year:
 Generate ONE HTML file only. No PDFs, no new tabs, no other files. If something fails — report the error.
 
 **Structure:**
-- Header: title, feature name, date, optional Figma link as clickable "🔗 Link to Actual Designs"
+- Header: title as "[Feature Name] Design Review Report", date
+- If Figma link provided: show as clickable "🔗 Link to Actual Designs"
+- If no Figma link: show a visible notice banner — "No design link attached. Ask the designer for the Figma link before reviewing." — bg #fffbeb / border #fde68a / text #92400e
 - Summary bar: three equal cards — Total Bugs / Critical / Minor
 - One card per bug:
 
@@ -147,6 +175,9 @@ Generate ONE HTML file only. No PDFs, no new tabs, no other files. If something 
 ```
 
 - Design always left, Frontend always right
+- Screenshot section background: #fafafa · card header background: #f1f3f7
+- Each screenshot container: min-height 200px · vertical divider between the two sides
+- Label pills: "Design — expected" / "Frontend — current" — bg #f8fafc / text #1e293b · 4px radius · small padding
 - Expected: green #16a34a · Actual: red #dc2626
 - CRIT badge: bg #fef2f2 / text #b91c1c / border #fecaca
 - Minor badge: bg #f8fafc / text #475569 / border #cbd5e1
