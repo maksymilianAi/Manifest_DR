@@ -1,4 +1,4 @@
-# Design Review Manifest V3.2
+# Design Review Manifest V3.3
 
 ## About this file
 This file contains personal preferences and rules for design review sessions.
@@ -14,7 +14,7 @@ Do not attempt to resize it.
 
 ## How I work
 - I will provide one screenshot: Figma design only
-- Take one screenshot of the current browser page yourself for the frontend
+- You will take one screenshot of the current browser page for the frontend — timing is defined in Step 0
 - If you need to verify a value from Figma, ask me: "Please provide Figma link for: [specific component]"
 - Do not fetch Figma on your own — always ask me for a specific node link
 
@@ -91,8 +91,8 @@ If unsure whether a text difference is a real bug or just dynamic data — ask m
   - "⚠️ Typo in frontend" if spelling error on frontend
   - "⚠️ Typo in design" if spelling error in Figma
 - Spacing between icon and adjacent text
-- Line height of text blocks (always verify via DevTools)
-- Margin between text lines/blocks (always verify via DevTools)
+- Line height of text blocks (verify via DevTools only if a visual difference is confirmed)
+- Margin between text lines/blocks (verify via DevTools only if a visual difference is confirmed)
 
 ---
 
@@ -299,5 +299,13 @@ Each bug is a separate card with this structure:
 
 ---
 
+## Zero bugs case
+If no visual differences are found after the full review, respond with:
+"No bugs found. The frontend matches the design."
+Then ask once: "Would you like to add a Figma link to the report?"
+Generate the HTML report with an empty bug list and a "No bugs found" summary.
+
+---
+
 ## Start
-Both screenshots are already provided above. Begin with Step 0.
+The Figma screenshot is provided above. Begin with Step 0.
