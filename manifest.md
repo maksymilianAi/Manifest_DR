@@ -14,9 +14,7 @@
 ---
 
 ## Step 0 — Before starting
-1. Ask me: "Is there any context I should know before starting the review? (e.g. known issues, things to skip, specific focus areas)"
-2. Wait for my answer. If I say "no" or similar — proceed immediately without follow-up questions.
-3. Take one screenshot of the current browser page and begin analysis.
+Take one screenshot of the current browser page and begin analysis immediately — do not ask any questions first.
 
 ---
 
@@ -90,7 +88,11 @@ If the design shows a color name or variable — resolve it to its hex value.
 - Do NOT use bold text in chat responses — plain text only
 - Only the bug table uses formatting
 
+---
+
 ## Output table
+Always output bugs as a markdown table — never as a list, never as prose.
+
 | # | Component | Property | Expected (Figma) | Actual (Frontend) |
 |---|-----------|----------|------------------|-------------------|
 
@@ -101,15 +103,16 @@ Exactly 5 columns. Every row fully filled. No Priority column.
 ---
 
 ## After showing all bugs
-After presenting the bug table:
-1. Ask once: "Would you like to add a Figma link to the report? (optional)"
-2. Present a plan with these exact steps before executing — do not skip the plan:
-   - Get today's real date from browser console
-   - Collect ALL bounding rects for ALL bugs in one single JS call
-   - Crop all screenshots in sequence using the pre-collected coordinates — no additional JS calls
+After presenting the bug table, ask exactly this — nothing else:
+
+> Proceed with these bugs? Type Y to generate the report · N to make changes
+
+- Y → ask once: "Would you like to add a Figma link to the report? (optional)" then execute immediately:
+   - One JS call: collect date + all bounding rects for all bugs together
+   - Crop all screenshots in sequence using the pre-collected coordinates — no JS calls during cropping
    - Generate and write the complete HTML report in one single file operation
-3. Wait for plan approval before proceeding
-4. After the report is saved, respond with exactly one line: "Report generated: [filename] · [date]" — nothing else
+   - Respond with exactly one line: "Report generated: [filename] · [date]" — nothing else
+- N → wait for instructions, update the table, then ask Y/N again
 
 ---
 
@@ -131,16 +134,17 @@ For each bug, crop both screenshots to highlight the problem area.
 
 Before taking any screenshot: close DevTools completely — never take a screenshot while DevTools is open or while any element is highlighted by the inspector. The DevTools overlay causes yellow/orange tinting on screenshots.
 
-Collect ALL bounding boxes for ALL bugs in one JS call before cropping anything:
+Collect date + ALL bounding boxes for ALL bugs in one single JS call — this counts as the final allowed JS call:
 ```js
-const rects = {
+({
+  date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' }),
   bug1: document.querySelector('SELECTOR_1').getBoundingClientRect(),
   bug2: document.querySelector('SELECTOR_2').getBoundingClientRect(),
   // ...all bugs
-};
+})
 ```
 Add 16px horizontal + 10px vertical padding around each element.
-Never query the DOM again after this — use only the pre-collected rects.
+Never make another JS call after this — use only the pre-collected values.
 
 If the problem element starts right after the sidebar:
 - Find the exact pixel where the sidebar ends (scan for dark navy pixels)
@@ -154,10 +158,12 @@ If the problem element starts right after the sidebar:
 **File name:** `design-review-[feature-name]-[YYYY-MM-DD].html`
 Get real date before generating: `new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })`
 
-Generate ONE HTML file only. No PDFs, no new tabs, no other files. If something fails — report the error.
+Generate ONE HTML file only. Write it once — do NOT download, trigger, or write the file more than once. No PDFs, no new tabs, no other files. If something fails — report the error.
+
+The report structure and visual design must be identical for every session — never improvise or vary the layout.
 
 **Structure:**
-- Header: title as "[Feature Name] Design Review Report", date
+- Header: title as "[Feature Name] Design review" (sentence case, no "Report") · date
 - If Figma link provided: show as clickable "🔗 Link to Actual Designs"
 - If no Figma link: show a visible notice banner — "No design link attached. Ask the designer for the Figma link before reviewing." — bg #fffbeb / border #fde68a / text #92400e
 - Summary bar: three equal cards — Total Bugs / Critical / Minor
@@ -174,6 +180,8 @@ Generate ONE HTML file only. No PDFs, no new tabs, no other files. If something 
 └──────────────────────────────────────────────────────────┘
 ```
 
+CRITICAL: every bug card MUST include both screenshots as actual embedded base64 images — Design on the left, Frontend on the right. Never replace a screenshot with text, a description, a placeholder, or an empty box. A card without real embedded images is invalid and must not be generated.
+
 - Design always left, Frontend always right
 - Screenshot section background: #fafafa · card header background: #f1f3f7
 - Each screenshot container: min-height 200px · vertical divider between the two sides
@@ -181,6 +189,7 @@ Generate ONE HTML file only. No PDFs, no new tabs, no other files. If something 
 - Expected: green #16a34a · Actual: red #dc2626
 - CRIT badge: bg #fef2f2 / text #b91c1c / border #fecaca
 - Minor badge: bg #f8fafc / text #475569 / border #cbd5e1
+- Color values in the table: plain hex only — #16a34a · never add brackets, parentheses, or color name labels like "(black)" or "(blue)"
 - Footer: "Generated by Claude Design Review · [date]"
 
 **Styling:** white cards on #f4f5f7 page · 1px border #e2e4e9 · 12px radius · max-width 1040px centered · system font stack (-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif)
