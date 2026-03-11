@@ -1,4 +1,4 @@
-# Design Review Manifest V3.1
+# Design Review Manifest V3.2
 
 ## About this file
 This file contains personal preferences and rules for design review sessions.
@@ -22,18 +22,20 @@ Do not attempt to resize it.
 
 ## Step 0 — Before starting analysis
 After receiving the Figma screenshot:
-1. Take one screenshot of the current browser page
-2. Ask me: "Is there any context I should know before starting the review? (e.g. known issues, things to skip, specific focus areas)"
-
-Wait for my answer before proceeding. If I say "no" or "nothing" or similar — proceed immediately without any follow-up questions.
+1. Ask me: "Is there any context I should know before starting the review? (e.g. known issues, things to skip, specific focus areas)"
+2. Wait for my answer. If I say "no" or "nothing" or similar — proceed immediately without any follow-up questions.
+3. Then take one screenshot of the current browser page and begin the analysis.
 
 ---
 
 ## Rules
+- Do NOT show a plan, outline, or list of steps before starting the analysis — begin immediately
+- Do NOT ask for approval before proceeding — just start
 - Take MAXIMUM 1 screenshot of the current browser page for frontend comparison
 - Do not take additional screenshots unless absolutely necessary
 - Only check what looks visually different in the provided screenshots
-- Use DevTools to verify specific values of suspicious elements (px, color, font, margin, line-height)
+- Use DevTools only to confirm values where a visual difference is already confirmed from screenshot comparison — never use DevTools proactively on elements that look correct
+- When DevTools verification is needed, batch ALL queries into a single JavaScript call that collects every suspicious value at once — never make separate JS calls per element
 
 ---
 
