@@ -93,12 +93,15 @@ If the design shows a color name or variable — resolve it to its hex value.
 ## Output table
 Always output bugs as a markdown table — never as a list, never as prose.
 
+The table has exactly 5 columns in this exact order — no more, no less:
+
 | # | Component | Property | Expected (Figma) | Actual (Frontend) |
 |---|-----------|----------|------------------|-------------------|
+| 1 | Button | Height | 40px | 42px |
 
-Exactly 5 columns. Every row fully filled. No Priority column.
-- NO empty columns anywhere
-- NO extra column between # and Component
+- Column 1 is #, column 2 is Component — there is NO column between them
+- Every cell in every row must be filled — no empty cells
+- No Priority column, no extra columns of any kind
 
 ---
 
