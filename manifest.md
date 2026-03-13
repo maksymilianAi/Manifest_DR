@@ -1,4 +1,4 @@
-# Design Review Manifest V3.4
+# Design Review Manifest V3.5
 
 ## Viewport
 1440px width, set manually before the session. Do not attempt to resize it.
@@ -108,8 +108,8 @@ After presenting the bug table, add a blank line, then ask exactly this as a sta
 > Proceed with these bugs? Type Y to generate the report · N to make changes
 
 - Y → ask once: "Would you like to add a Figma link to the report? (optional)" then execute immediately:
-   - One JS call: collect date + all bounding rects for all bugs together
-   - Crop all screenshots in sequence using the pre-collected coordinates — no JS calls during cropping
+   - Get today's real date from browser console
+   - For each bug: get bounding rect, take real screenshot crop from browser, crop matching area from Figma screenshot
    - Generate and write the complete HTML report in one single file operation
    - Respond with exactly one line: "Report generated: [filename]" — nothing else
 - N → wait for instructions, update the table, then ask Y/N again
@@ -146,22 +146,14 @@ Never take a screenshot while DevTools is open or while any element is highlight
 
 ### How to crop
 
-Collect date + ALL bounding boxes for ALL bugs in one single JS call before cropping anything:
-```js
-({
-  date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' }),
-  bug1: document.querySelector('SELECTOR_1').getBoundingClientRect(),
-  bug2: document.querySelector('SELECTOR_2').getBoundingClientRect(),
-  // ...all bugs
-})
-```
-Then for each bug:
-1. Add padding: 16px horizontal, 10px vertical around the element
-2. Find the matching area in the Figma screenshot
-3. Scale both crops to the same height (use the taller of the two, then apply zoom multiplier)
-4. Ensure height ≥ 100px after scaling
-
-Never make another JS call after the batch — use only the pre-collected values.
+For each bug individually:
+1. Get the bounding box of the problem element:
+   `const r = document.querySelector('SELECTOR').getBoundingClientRect(); console.log(r.top, r.left, r.width, r.height)`
+2. Add padding: 16px horizontal, 10px vertical around the element
+3. Take a real screenshot crop of that area from the browser
+4. Find and crop the matching area from the Figma screenshot provided
+5. Scale both crops to the same height (use the taller of the two, then apply zoom multiplier)
+6. Ensure height ≥ 100px after scaling
 
 ### Centering rule
 The element being compared must appear centered in both the frontend and design crop. Calculate the element's center point from the bounding rect and ensure equal padding on all sides. Never let the subject sit at the far left or right edge of the frame.
