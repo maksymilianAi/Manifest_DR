@@ -175,7 +175,13 @@ For each bug individually:
    `const r = document.querySelector('SELECTOR').getBoundingClientRect(); console.log(r.top, r.left, r.width, r.height)`
 2. Add padding: 16px horizontal, 10px vertical around the element
 3. Take a real screenshot crop of that area from the browser
-4. Find and crop the matching area from the Figma screenshot provided
+
+4. Find the matching area in the Figma screenshot:
+   - The Figma crop must show the exact same element as the frontend crop — same component, same position in the layout
+   - Use the property being compared (e.g. "Total value color") to locate the right element in Figma — do not crop a different element that happens to be nearby
+   - If the bug is about a text element, crop the text in Figma — not a chart, not a container around it
+   - Visually verify: both crops should look like the same UI element, just styled differently
+
 5. Scale both crops to the same height (use the taller of the two, then apply zoom multiplier)
 6. Ensure height ≥ 100px after scaling
 
@@ -219,7 +225,7 @@ The report structure and visual design must be identical for every session — n
 └──────────────────────────────────────────────────────────┘
 ```
 
-CRITICAL: every bug card MUST include both screenshots as actual embedded base64 images — Design on the left, Frontend on the right. Never replace a screenshot with text, a description, a placeholder, or an empty box. A card without real embedded images is invalid and must not be generated.
+CRITICAL: every bug card MUST include both screenshots as actual embedded base64 images — Design on the left, Frontend on the right. Never replace a screenshot with text, a description, a placeholder, an empty box, or HTML/CSS recreations of the element. Only real cropped screenshots from the browser and Figma image are allowed. A card without real embedded images is invalid and must not be generated.
 
 - Design always left, Frontend always right
 - Screenshot section background: #fafafa · card header background: #f1f3f7
