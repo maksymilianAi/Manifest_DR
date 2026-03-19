@@ -7,7 +7,15 @@ Always follow these rules when asked to do a design review.
 ---
 
 ## Viewport
-1440px width, set manually before the session. Do not attempt to resize it.
+The page content must render at exactly 1440px width. The Claude panel occupies ~365px, so the total browser window width must be set to 1805px.
+
+At the start of every session, before taking any screenshot, run this in the browser console:
+`window.resizeTo(1805, window.outerHeight)`
+
+Then verify the content width is 1440px:
+`document.documentElement.clientWidth`
+
+If the result is not 1440 — report it and stop. Do not proceed with a wrong viewport.
 
 ---
 
@@ -20,7 +28,9 @@ Always follow these rules when asked to do a design review.
 ---
 
 ## Step 0 — Before starting
-Take one screenshot of the current browser page and begin analysis immediately — do not ask any questions first.
+1. Run `window.resizeTo(1805, window.outerHeight)` to set the viewport to 1440px content width
+2. Take one screenshot of the current browser page
+3. Begin analysis immediately — do not ask any questions
 
 ---
 
