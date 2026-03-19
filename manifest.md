@@ -166,7 +166,7 @@ Never include the sidebar navigation in any crop. Use DevTools `getBoundingClien
 Scale crops up by 2× for normal elements. Use 3× for thin rows (table headers, breadcrumbs, single-line labels).
 
 **Before taking any screenshot: close DevTools completely.**
-Never take a screenshot while DevTools is open or while any element is highlighted by the inspector. The DevTools overlay causes yellow/orange tinting.
+After running any JS console command, close DevTools entirely before taking the screenshot. Never take a screenshot while DevTools is open, the console is visible, or any element is highlighted by the inspector. The DevTools inspector overlay causes orange/yellow tinting that covers the element and makes the screenshot unusable. If a screenshot comes out with an orange overlay — discard it, close DevTools, and retake it.
 
 ### How to crop
 
