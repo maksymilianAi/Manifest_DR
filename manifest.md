@@ -203,7 +203,7 @@ If the problem element starts right after the sidebar:
 **File name:** `design-review-[feature-name]-[YYYY-MM-DD].html`
 Get real date before generating: `new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: '2-digit' })`
 
-Generate ONE HTML file only. Write it once — do NOT download, trigger, or write the file more than once. No PDFs, no new tabs, no other files. If something fails — report the error.
+Generate ONE HTML file only. Write it directly to disk using the file write tool — nothing else. Do NOT open new tabs, do NOT use blob URLs, do NOT use window.open(), do NOT use URL.createObjectURL(), do NOT trigger any browser navigation. Write it once and only once. If something fails — report the error.
 
 The report structure and visual design must be identical for every session — never improvise or vary the layout.
 
