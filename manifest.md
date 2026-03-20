@@ -1,4 +1,4 @@
-# Design Review Manifest V3.8
+# Design Review Manifest V3.9
 
 ## About this file
 This file contains personal preferences and rules for design review sessions.
